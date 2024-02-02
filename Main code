@@ -1,0 +1,73 @@
+import java.security.MessageDigest;
+import java.util.Scanner;
+
+public class LoginProgram {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int maxAttempts = 3;
+        boolean loggedIn = false;
+
+        // Here i have used a simple hardcoded hash
+        String storedHashedPassword = hashPassword("****"); // Change the password here
+
+        // Loop for login attempts
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            System.out.println("Attempt " + attempt + ": Enter your username:");
+            String username = scanner.nextLine();
+
+            System.out.println("Enter your password:");
+            String password = scanner.nextLine();
+
+            // Hash the entered password for comparison
+            String hashedPassword = hashPassword(password);
+
+            // Check if the username and password are correct
+            if (isValidCredentials(username, hashedPassword, storedHashedPassword)) {
+                loggedIn = true;
+                System.out.println("Login successful. Welcome, " + username + "!");
+                break;
+            } else {
+                System.out.println("Invalid credentials. Please try again.");
+            }
+        }
+
+        // Display final message based on login success or failure
+        if (!loggedIn) {
+            System.out.println("Max attempts reached. Login failed.");
+        }
+
+        // Close the scanner
+        scanner.close();
+    }
+
+    // Method to hash the password using SHA-256
+    private static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(password.getBytes());
+
+            // Convert the byte array to a hexadecimal string
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    // Method to check if credentials are valid (replace with actual authentication logic)
+    private static boolean isValidCredentials(String username, String enteredHashedPassword, String storedHashedPassword) {
+        // Replace this with your authentication logic
+        // For demonstration purposes, username is "user" and password is "****"
+        return "user".equals(username) && storedHashedPassword.equals(enteredHashedPassword);
+    }
+}
